@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'SVCircularSlider_Example' do
+  pod 'SVCircularSlider', :path => '../'
+
+  target 'SVCircularSlider_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
