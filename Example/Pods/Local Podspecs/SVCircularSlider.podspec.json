@@ -1,0 +1,22 @@
+{
+  "name": "SVCircularSlider",
+  "version": "0.1.0",
+  "summary": "A short description of SVCircularSlider.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/stevalsecchi98/SVCircularSlider",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "stevalsecchi98": "stefano.valsecchi@vidiemme.lan"
+  },
+  "source": {
+    "git": "https://github.com/stevalsecchi98/SVCircularSlider.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "SVCircularSlider/Classes/**/*"
+}

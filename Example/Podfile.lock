@@ -1,0 +1,16 @@
+PODS:
+  - SVCircularSlider (0.1.0)
+
+DEPENDENCIES:
+  - SVCircularSlider (from `../`)
+
+EXTERNAL SOURCES:
+  SVCircularSlider:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  SVCircularSlider: 9e3cbe9afbdb359e37d6171839f51b8bc58bfb61
+
+PODFILE CHECKSUM: 85f65c85f68801e9bbd57f468b247186abd9efd7
+
+COCOAPODS: 1.9.3
