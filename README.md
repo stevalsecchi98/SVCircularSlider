@@ -22,7 +22,7 @@ pod 'SVCircularSlider'
 
 ## Author
 
-stevalsecchi98, stefano.valsecchi@vidiemme.lan
+stevalsecchi98, stevalsecchi98@gmail.com
 
 ## License
 

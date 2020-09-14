@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name             = 'SVCircularSlider'
   s.version          = '0.1.0'
-  s.summary          = 'A short description of SVCircularSlider.'
+  s.summary          = 'Interactive and Customizeble Circular Slider'
 
 # This description is used to generate tags and improve search results.
 #   * Think: What does it do? Why did you write it? What is the focus?
@@ -18,19 +18,19 @@ Pod::Spec.new do |s|
 #   * Finally, don't worry about the indent, CocoaPods strips it!
 
   s.description      = <<-DESC
-TODO: Add long description of the pod here.
+'Interactive and Customizeble Circular Slider, which returns a percentage value'
                        DESC
 
   s.homepage         = 'https://github.com/stevalsecchi98/SVCircularSlider'
   # s.screenshots     = 'www.example.com/screenshots_1', 'www.example.com/screenshots_2'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
-  s.author           = { 'stevalsecchi98' => 'stefano.valsecchi@vidiemme.lan' }
+  s.author           = { 'stevalsecchi98' => 'Stevalsecchi98@gmail.com' }
   s.source           = { :git => 'https://github.com/stevalsecchi98/SVCircularSlider.git', :tag => s.version.to_s }
   # s.social_media_url = 'https://twitter.com/<TWITTER_USERNAME>'
 
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '12.0'
 
-  s.source_files = 'SVCircularSlider/Classes/**/*'
+  s.source_files = 'Source/**/*.swift'
   
   # s.resource_bundles = {
   #   'SVCircularSlider' => ['SVCircularSlider/Assets/*.png']
