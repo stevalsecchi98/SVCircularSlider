@@ -9,6 +9,10 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+
+![ezgif com-optimize](https://user-images.githubusercontent.com/60033082/93188851-c8155e80-f741-11ea-9149-cab4d301b092.gif)
+
+
 ## Requirements
 
 ## Installation
