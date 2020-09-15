@@ -5,6 +5,10 @@
 [![License](https://img.shields.io/cocoapods/l/SVCircularSlider.svg?style=flat)](https://cocoapods.org/pods/SVCircularSlider)
 [![Platform](https://img.shields.io/cocoapods/p/SVCircularSlider.svg?style=flat)](https://cocoapods.org/pods/SVCircularSlider)
 
+Customizable and Interactive Circular Slider 
+
+<img width="220" alt="Schermata 2020-09-15 alle 10 47 46" src="https://user-images.githubusercontent.com/60033082/93189190-27736e80-f742-11ea-86d0-50f3fa3e3473.png">
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
