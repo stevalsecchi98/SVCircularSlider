@@ -14,12 +14,12 @@ class SpeedSlider: CircularSlider {
         super.init(frame: frame)
 
         progressColors = [
-            .white.withAlphaComponent(0.1),
-            .white.withAlphaComponent(0.6),
-            .blue.withAlphaComponent(0.9),
+            .blue,
+            .green,
+            .red,
         ]
         
-        counterColor = .blue
+        counterColor = .gray
         diskColor = .blue.withAlphaComponent(0.1)
         titleFont = .systemFont(ofSize: 14)
         progressFont = .systemFont(ofSize: 12)

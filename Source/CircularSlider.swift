@@ -89,7 +89,7 @@ open class CircularSlider: UIView {
         }
     }
     
-    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.onToucEnd()
     }
     
@@ -266,7 +266,6 @@ open class CircularSlider: UIView {
         let colors = progressColors.map { $0.cgColor }
 
         let grad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors as CFArray, locations: nil)
-        
         let start = CGPoint(x: 0, y: 0)
         let end = CGPoint(x: self.frame.maxX, y:  self.frame.maxY)
         c.drawLinearGradient(grad!, start: start, end: end, options: [])
