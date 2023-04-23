@@ -14,9 +14,9 @@ class SpeedSlider: CircularSlider {
         super.init(frame: frame)
 
         progressColors = [
-            .blue,
-            .green,
             .red,
+            .green,
+            .blue,
         ]
         
         counterColor = .gray
