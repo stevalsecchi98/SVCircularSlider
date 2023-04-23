@@ -9,39 +9,66 @@ import Foundation
 import UIKit
 
 // PRCENTAGE VIEW
-@available(iOS 9.1, *)
-@IBDesignable
-public class CircularSlider: UIView {
+open class CircularSlider: UIView {
     // CONSTANTS FOR DRAWING
     private struct Constants {
         static let max : CGFloat = 1.0
         static let lineWidth: CGFloat = 5.0
-        static let arcWidth: CGFloat = 30
+        static let arcWidth: CGFloat = 10
         static var halfOfLineWidth: CGFloat { return lineWidth / 2 }
+        static let arcPadding: CGFloat = 15
     }
+    
     // PROGRESS: Indicates the percentage with a number between 0 and 1
-    @IBInspectable public var progress: CGFloat = 0.65 {
-      didSet {
-        if !(0...1).contains(progress) {
-            // clamp: if progress is over 1 or less than 0 give it a value between them
-            progress = max(0, min(1, progress))
+    @IBInspectable public var progress: CGFloat = 0.5 {
+        didSet {
+            if !(0...1).contains(progress) {
+                // clamp: if progress is over 1 or less than 0 give it a value between them
+                progress = max(0, min(1, progress))
+            }
+            setNeedsDisplay()
         }
-        setNeedsDisplay()
-      }
     }
+    
+    public override init(frame: CGRect) {
+        percentageLabel = UILabel()
+        titleLabel = UILabel()
+        super.init(frame: frame)
+    }
+    
+    required public init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // INSPECTABLE VARIABLES TO COLOR EACH ITEM FROM STORYBOARD
-    @IBInspectable public var firstFillColor: UIColor = UIColor.red { didSet { setNeedsDisplay() } }
-    @IBInspectable public var secondFillColor: UIColor = UIColor.yellow { didSet { setNeedsDisplay() } }
+    @IBInspectable public var progressColors: [UIColor] = [.blue.withAlphaComponent(0.5),
+                                                           .white.withAlphaComponent(0.6),
+                                                           .blue.withAlphaComponent(0.9)] { didSet { setNeedsDisplay() } }
+    
     @IBInspectable public var counterColor: UIColor = UIColor.orange { didSet { setNeedsDisplay() } }
     @IBInspectable public var knobColor: UIColor = .gray  { didSet { setNeedsDisplay() } }
+    @IBInspectable public var knobBorderColor: UIColor = .gray  { didSet { setNeedsDisplay() } }
+    @IBInspectable public var diskColor: UIColor = .white  { didSet { setNeedsDisplay() } }
+    @IBInspectable public var knobBorderWidth: CGFloat = 0  { didSet { setNeedsDisplay() } }
+    @IBInspectable public var sliderTitle: String = ""  { didSet { setNeedsDisplay() } }
+    @IBInspectable public var titleFont: UIFont = .systemFont(ofSize: 12)  { didSet { setNeedsDisplay() } }
+    @IBInspectable public var progressFont: UIFont = .systemFont(ofSize: 12)  { didSet { setNeedsDisplay() } }
+    @IBInspectable public var progressColor: UIColor = .black { didSet { setNeedsDisplay() } }
+    @IBInspectable public var titleColor: UIColor = .black { didSet { setNeedsDisplay() } }
+    
     // Label init
-    let percentageLabel = UILabel(frame: CGRect(x: 150, y: 150, width: 200, height: 40))
+    public let percentageLabel: UILabel
+    let titleLabel: UILabel
     // position to be set everytime the progress is updated
     public fileprivate(set) var pointerPosition: CGPoint = CGPoint()
     // boolean which chooses if the knob can be dragged or not
     var canDrag = false
     // variable that stores the lenght of the arc based on the last touch
     var oldLength : CGFloat = 300
+    
+    public var onProgressChanged: (_ progress: CGFloat) -> Void = { progress in}
+    public var onTouchesBegan: () -> Void = { }
+    public var onToucEnd: () -> Void = { }
     
     // TOUCHES BEGAN: if the touch is near thw pointer let it be possible to be dragged
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -51,12 +78,21 @@ public class CircularSlider: UIView {
                 // distance of touch from pointer
                 let xDist = CGFloat(firstTouch.preciseLocation(in: hitView).x - pointerPosition.x)
                 let yDist = CGFloat(firstTouch.preciseLocation(in: hitView).y - pointerPosition.y)
-                let distance = CGFloat(sqrt((xDist * xDist) + (yDist * yDist)))
+                let distance = CGFloat(sqrt((xDist * xDist) + (yDist * yDist))) - 20
                 canDrag = true
-                guard distance < 30 else { return canDrag = false }
+                guard distance < Constants.arcWidth else {
+                    return canDrag = false
+                }
+                
+                self.onTouchesBegan()
             }
         }
     }
+    
+    open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.onToucEnd()
+    }
+    
     // TOUCHES MOVED: If touchesBegan says that the pointer can be dragged let it be dregged by the touch of the user
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let firstTouch = touches.first {
@@ -94,15 +130,34 @@ public class CircularSlider: UIView {
                     var newArcLength =  CGFloat(theta) * radius
                 
                     // CHECK CONDITIONS OF THE POINTER'S POSITION
-                    if 480.0 ... 550.0 ~= newArcLength { newArcLength = 480 }
-                    else if 550.0 ... 630.0 ~= newArcLength { newArcLength = 0 }
-                    if oldLength == 480 && 0 ... 465 ~= newArcLength  { newArcLength = 480 }
-                    else if oldLength == 0 && 15 ... 480 ~= newArcLength { newArcLength = 0 }
+                    if 480.0 ... 550.0 ~= newArcLength {
+                        newArcLength = 480
+                        
+                    }
+                    else if 550.0 ... 630.0 ~= newArcLength {
+                        newArcLength = 0
+                        
+                    }
+                    if oldLength == 480 && 0 ... 465 ~= newArcLength  {
+                        newArcLength = 480
+                        
+                    }
+                    else if oldLength == 0 && 15 ... 480 ~= newArcLength {
+                        newArcLength = 0
+                    }
+                    
+                   
                     oldLength = newArcLength
                     
                     // PERCENTAGE TO BE ASSIGNED TO THE PROGRES VAR
                     let newPercentage = newArcLength/arcLength
+                    if (CGFloat(newPercentage) - 1) >= 0.15 {
+                        oldLength = 300
+                        return
+                    }
+                    
                     progress = CGFloat(newPercentage)
+                    
                 }
             }
         }
@@ -110,11 +165,27 @@ public class CircularSlider: UIView {
     // LABEL
     public func label() {
         // DRAW THE PERCENTAGE LABEL
-        percentageLabel.translatesAutoresizingMaskIntoConstraints = true
-        percentageLabel.font = percentageLabel.font.withSize(28)
-        percentageLabel.center = CGPoint(x: 115, y: 115)
-        percentageLabel.textAlignment = .center
-        self.addSubview(percentageLabel)
+//        percentageLabel.translatesAutoresizingMaskIntoConstraints = true
+        if percentageLabel.superview == nil {
+            self.addSubview(percentageLabel)
+            self.percentageLabel.textColor = progressColor
+            self.percentageLabel.font = progressFont
+            percentageLabel.translatesAutoresizingMaskIntoConstraints = false
+            percentageLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+            percentageLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
+        }
+        
+        if titleLabel.superview == nil {
+            self.addSubview(titleLabel)
+            
+            self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            self.titleLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+            self.titleLabel.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -10).isActive = true
+            self.titleLabel.text = sliderTitle
+            self.titleLabel.textColor = titleColor
+            self.titleLabel.font = titleFont
+        }
+        
         let percentage = Int(Double(progress * 100))
         percentageLabel.text = "\(percentage)%"
     }
@@ -123,11 +194,14 @@ public class CircularSlider: UIView {
         // call label function
         label()
         
+        // notify the delegate
+        self.onProgressChanged(progress)
+        
         //DRAW THE OUTLINE
         // 1 Define the center point you’ll rotate the arc around.
         let center = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
         // 2 Calculate the radius based on the maximum dimension of the view.
-        let radius = max(bounds.width, bounds.height)
+        let radius = max(bounds.width, bounds.height) - 10
         // 3 Define the start and end angles for the arc.
         let startAngle: CGFloat = 3 * .pi / 4
         let endAngle: CGFloat = .pi / 4
@@ -156,43 +230,67 @@ public class CircularSlider: UIView {
         // radius is the same as main path
         let insidePath = UIBezierPath(
         arcCenter: center,
+        radius: radius/2 - Constants.arcWidth / 2,
+        startAngle: startAngle,
+        endAngle: outlineEndAngle,
+        clockwise: true)
+        
+        let insidePath2 = UIBezierPath(
+        arcCenter: center,
         radius: radius/2 - Constants.arcWidth/2,
         startAngle: startAngle,
         endAngle: outlineEndAngle,
         clockwise: true)
+        
         //outlineColor.setStroke()
         insidePath.lineCapStyle = .round
-        insidePath.lineWidth = CGFloat(30.0)
+        insidePath.lineWidth = CGFloat(Constants.arcWidth)
         insidePath.stroke()
+        
+        diskColor.setFill()
+        insidePath2.addLine(to: center)
+        insidePath2.fill()
         
         // GRADIENT: create a context to clip to the insidePath
         // graphicContext
         let c = UIGraphicsGetCurrentContext()!
         let clipPath: CGPath = insidePath.cgPath
         c.saveGState()
-        c.setLineWidth(30.0)
+        c.setLineWidth(Constants.arcWidth)
         c.addPath(clipPath)
         c.setLineCap(.round)
         c.replacePathWithStrokedPath()
         c.clip()
         // Draw gradient
-        let colors = [firstFillColor.cgColor, secondFillColor.cgColor]
-        let offsets = [ CGFloat(0.0), CGFloat(1.0) ]
-        let grad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors as CFArray, locations: offsets)
+        
+        let colors = progressColors.map { $0.cgColor }
+
+        let grad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors as CFArray, locations: nil)
         let start = CGPoint(x: 0, y: 0)
-        let end = CGPoint(x: 230, y: 230)
+        let end = CGPoint(x: self.frame.maxX, y:  self.frame.maxY)
         c.drawLinearGradient(grad!, start: start, end: end, options: [])
         c.restoreGState()
         // result
-        let result = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
+        
         // DRAW THE POINTER
-        let pointerRect = CGRect(x: insidePath.currentPoint.x - Constants.arcWidth / 2, y: insidePath.currentPoint.y - Constants.arcWidth / 2, width: Constants.arcWidth, height: Constants.arcWidth)
+        let pointerRect = CGRect(x: insidePath.currentPoint.x - 16 / 2, y: insidePath.currentPoint.y - 16 / 2, width: 16, height: 16)
         let pointer = UIBezierPath(ovalIn: pointerRect)
         knobColor.setFill()
         pointer.fill()
         insidePath.append(pointer)
+        
+        let pointerRectBorder = CGRect(x: insidePath.currentPoint.x - 16 / 2, y: insidePath.currentPoint.y - 16 / 2, width: 16, height: 16)
+        let pointerBorder = UIBezierPath(ovalIn: pointerRectBorder)
+        
+        knobBorderColor.setStroke()
+//        pointerBorder.lineWidth = 10
+
+        pointer.lineWidth = knobBorderWidth
+        pointer.stroke()
+        insidePath.append(pointerBorder)
         
         // SET THE POSITION
         pointerPosition = CGPoint(x: insidePath.currentPoint.x - Constants.arcWidth / 2, y: insidePath.currentPoint.y - Constants.arcWidth / 2)

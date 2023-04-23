@@ -19,6 +19,25 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let slider = SpeedSlider(frame: .init(x: 100, y: 100, width: 200, height: 200))
+        self.view.addSubview(slider)
+        
+        slider.onProgressChanged = { progress in
+            print("Progress changged: \(progress)")
+        }
+        
+        slider.onToucEnd = {
+            print("Slider onToucEnd")
+        }
+        
+        slider.onTouchesBegan = {
+            print("Slider onTouchesBegan")
+        }
+    }
 
 }
 
